@@ -1,0 +1,47 @@
+From 1970dd558af3e75649bbb258deb696c3ed1eb0e5 Mon Sep 17 00:00:00 2001
+From: Miguel Bernal Marin <miguel.bernal.marin@linux.intel.com>
+Date: Sat, 26 Mar 2016 16:11:02 -0600
+Subject: [PATCH 2/3] makefile: add soname to library
+
+---
+ Makefile | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index f0706c1..f632284 100644
+--- a/Makefile
++++ b/Makefile
+@@ -46,6 +46,10 @@ EXAMPLES := $(addprefix bin/, $(notdir $(basename $(EXAMPLES))))
+ # Determine to where librealsense will be istalled
+ prefix ?= /usr/local
+ 
++# Library ABI version
++LIB_ABI=0
++LIB_NAME=librealsense.so.$(LIB_ABI)
++
+ # Aliases for convenience
+ all: examples $(EXAMPLES)
+ 
+@@ -53,7 +57,8 @@ install: library
+ 	install -m755 -d $(DESTDIR)$(prefix)/include/librealsense
+ 	install -m755 -d $(DESTDIR)$(prefix)/lib$(LIB_SUFFIX)
+ 	cp -r include/librealsense/* $(DESTDIR)$(prefix)/include/librealsense
+-	cp lib/librealsense.so $(DESTDIR)$(prefix)/lib$(LIB_SUFFIX)
++	cp lib/$(LIB_NAME) $(DESTDIR)$(prefix)/lib$(LIB_SUFFIX)
++	ln -s -f $(LIB_NAME) $(basename $(DESTDIR)$(prefix)/lib$(LIB_SUFFIX)/$(LIB_NAME))
+ 
+ clean:
+ 	rm -rf obj
+@@ -76,7 +81,8 @@ bin/cpp-%: examples/cpp-%.cpp library
+ 
+ # Rules for building the library itself
+ lib/librealsense.so: prepare $(OBJECTS)
+-	$(CXX) -std=c++11 -shared $(OBJECTS) $(LIBUSB_FLAGS) -o $@
++	$(CXX) -std=c++11 -shared -Wl,-soname,$(LIB_NAME) $(OBJECTS) $(LIBUSB_FLAGS) -o lib/$(LIB_NAME)
++	ln -s -f $(LIB_NAME) $@
+ 
+ lib/librealsense.a: prepare $(OBJECTS)
+ 	ar rvs $@ `find obj/ -name "*.o"`
+-- 
+2.4.3
+
