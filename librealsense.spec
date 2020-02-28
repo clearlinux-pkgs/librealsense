@@ -4,10 +4,10 @@
 #
 Name     : librealsense
 Version  : 2.30.1
-Release  : 3
+Release  : 4
 URL      : https://github.com/IntelRealSense/librealsense/archive/v2.30.1/librealsense-2.30.1.tar.gz
 Source0  : https://github.com/IntelRealSense/librealsense/archive/v2.30.1/librealsense-2.30.1.tar.gz
-Summary  : Intel® RealSense™ SDK 2.0 is a cross-platform library for Intel® RealSense™ depth cameras (D400 series and the SR300)
+Summary  : Intel(R) RealSense(tm) Cross Platform API
 Group    : Development/Tools
 License  : Apache-2.0 BSD-2-Clause BSD-3-Clause-LBNL BSL-1.0 MIT Zlib
 Requires: librealsense-bin = %{version}-%{release}
@@ -18,7 +18,6 @@ Requires: wheel
 BuildRequires : Vulkan-Headers-dev Vulkan-Loader-dev Vulkan-Tools
 BuildRequires : buildreq-cmake
 BuildRequires : buildreq-distutils3
-BuildRequires : buildreq-mvn
 BuildRequires : buildreq-qmake
 BuildRequires : cmake
 BuildRequires : doxygen
@@ -27,7 +26,6 @@ BuildRequires : extra-cmake-modules wayland
 BuildRequires : glfw-dev
 BuildRequires : glibc-dev
 BuildRequires : glu-dev
-BuildRequires : gradle
 BuildRequires : libX11-dev libICE-dev libSM-dev libXau-dev libXcomposite-dev libXcursor-dev libXdamage-dev libXdmcp-dev libXext-dev libXfixes-dev libXft-dev libXi-dev libXinerama-dev libXi-dev libXmu-dev libXpm-dev libXrandr-dev libXrender-dev libXres-dev libXScrnSaver-dev libXt-dev libXtst-dev libXv-dev libXxf86misc-dev libXxf86vm-dev
 BuildRequires : mesa-dev
 BuildRequires : pkg-config
@@ -63,7 +61,6 @@ Requires: librealsense-lib = %{version}-%{release}
 Requires: librealsense-bin = %{version}-%{release}
 Provides: librealsense-devel = %{version}-%{release}
 Requires: librealsense = %{version}-%{release}
-Requires: librealsense = %{version}-%{release}
 
 %description dev
 dev components for the librealsense package.
@@ -88,16 +85,16 @@ license components for the librealsense package.
 
 %prep
 %setup -q -n librealsense-2.30.1
+cd %{_builddir}/librealsense-2.30.1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1573517154
+export SOURCE_DATE_EPOCH=1582932356
 mkdir -p clr-build
 pushd clr-build
-# -Werror is for werrorists
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -111,7 +108,7 @@ make  %{?_smp_mflags}  VERBOSE=1
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1573517154
+export SOURCE_DATE_EPOCH=1582932356
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/librealsense
 cp %{_builddir}/librealsense-2.30.1/LICENSE %{buildroot}/usr/share/package-licenses/librealsense/feb32923246a19b9ca9f031fb603f140e2f212fe
