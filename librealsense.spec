@@ -4,9 +4,10 @@
 #
 Name     : librealsense
 Version  : 2.30.1
-Release  : 4
+Release  : 5
 URL      : https://github.com/IntelRealSense/librealsense/archive/v2.30.1/librealsense-2.30.1.tar.gz
 Source0  : https://github.com/IntelRealSense/librealsense/archive/v2.30.1/librealsense-2.30.1.tar.gz
+Source1  : https://sqlite.org/2020/sqlite-autoconf-3310100.tar.gz
 Summary  : Intel(R) RealSense(tm) Cross Platform API
 Group    : Development/Tools
 License  : Apache-2.0 BSD-2-Clause BSD-3-Clause-LBNL BSL-1.0 MIT Zlib
@@ -14,6 +15,7 @@ Requires: librealsense-bin = %{version}-%{release}
 Requires: librealsense-lib = %{version}-%{release}
 Requires: librealsense-license = %{version}-%{release}
 Requires: setuptools
+Requires: twine
 Requires: wheel
 BuildRequires : Vulkan-Headers-dev Vulkan-Loader-dev Vulkan-Tools
 BuildRequires : buildreq-cmake
@@ -35,7 +37,9 @@ BuildRequires : pkgconfig(wayland-protocols)
 BuildRequires : pkgconfig(xkbcommon)
 BuildRequires : python3
 BuildRequires : setuptools
+BuildRequires : twine
 BuildRequires : wheel
+Patch1: 0001-Reapply-librealsense-changes-to-sqlite.patch
 
 %description
 TCLAP - Templatized Command Line Argument Parser
@@ -85,14 +89,19 @@ license components for the librealsense package.
 
 %prep
 %setup -q -n librealsense-2.30.1
+cd %{_builddir}
+tar xf %{_sourcedir}/sqlite-autoconf-3310100.tar.gz
 cd %{_builddir}/librealsense-2.30.1
+mkdir -p third-party/sqlite/
+cp -r %{_builddir}/sqlite-autoconf-3310100/* %{_builddir}/librealsense-2.30.1/third-party/sqlite/
+%patch1 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1582932356
+export SOURCE_DATE_EPOCH=1585946249
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -100,18 +109,19 @@ export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
 export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 %cmake ..
 make  %{?_smp_mflags}  VERBOSE=1
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1582932356
+export SOURCE_DATE_EPOCH=1585946249
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/librealsense
 cp %{_builddir}/librealsense-2.30.1/LICENSE %{buildroot}/usr/share/package-licenses/librealsense/feb32923246a19b9ca9f031fb603f140e2f212fe
+cp %{_builddir}/librealsense-2.30.1/NOTICE %{buildroot}/usr/share/package-licenses/librealsense/3bfcbf510500c74e82abe42b4e302f330cb6c3da
 cp %{_builddir}/librealsense-2.30.1/third-party/easyloggingpp/LICENCE %{buildroot}/usr/share/package-licenses/librealsense/771862b9a708887e47e8c13341d580bd0e2c82c5
 cp %{_builddir}/librealsense-2.30.1/third-party/glfw/LICENSE.md %{buildroot}/usr/share/package-licenses/librealsense/21c8bb406fc95e37e02393d355d00faf4d3fd732
 cp %{_builddir}/librealsense-2.30.1/third-party/imgui/LICENSE %{buildroot}/usr/share/package-licenses/librealsense/4d91c0fc8635b88888b4ed6c3dc5cbb17b31aaca
@@ -220,6 +230,7 @@ popd
 %defattr(0644,root,root,0755)
 /usr/share/package-licenses/librealsense/10bf56381baaf07f0647b93a810eb4e7e9545e8d
 /usr/share/package-licenses/librealsense/21c8bb406fc95e37e02393d355d00faf4d3fd732
+/usr/share/package-licenses/librealsense/3bfcbf510500c74e82abe42b4e302f330cb6c3da
 /usr/share/package-licenses/librealsense/4d91c0fc8635b88888b4ed6c3dc5cbb17b31aaca
 /usr/share/package-licenses/librealsense/71a7f368f90789db807331860cb72d10abdb4acb
 /usr/share/package-licenses/librealsense/771862b9a708887e47e8c13341d580bd0e2c82c5

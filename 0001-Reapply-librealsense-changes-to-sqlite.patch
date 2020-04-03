@@ -1,0 +1,59 @@
+From 9248d81eaff6bc71d7b20ca358e245cd6689b28c Mon Sep 17 00:00:00 2001
+From: "Anselmo L. S. Melo" <anselmo.melo@intel.com>
+Date: Fri, 3 Apr 2020 11:56:55 -0700
+Subject: [PATCH] Reapply librealsense changes to sqlite
+
+Use build config to disable sqlite code removed by librealsense.
+
+---
+ third-party/sqlite/CMakeLists.txt | 3 ++-
+ third-party/sqlite/sqlite3.c      | 6 +++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/third-party/sqlite/CMakeLists.txt b/third-party/sqlite/CMakeLists.txt
+index 2d9bb615c..c45711f6c 100644
+--- a/third-party/sqlite/CMakeLists.txt
++++ b/third-party/sqlite/CMakeLists.txt
+@@ -1,5 +1,6 @@
++add_definitions(-DLIBREALSENSE=1)
+ target_sources(${LRS_TARGET}
+     PRIVATE
+ 		"${CMAKE_CURRENT_LIST_DIR}/sqlite3.c"
+ 		"${CMAKE_CURRENT_LIST_DIR}/sqlite3.h"
+-)
+\ No newline at end of file
++)
+diff --git a/third-party/sqlite/sqlite3.c b/third-party/sqlite/sqlite3.c
+index 64fae0483..2dbb5b46e 100644
+--- a/third-party/sqlite/sqlite3.c
++++ b/third-party/sqlite/sqlite3.c
+@@ -13134,6 +13134,7 @@ struct fts5_api {
+ */
+ #if defined(_HAVE_SQLITE_CONFIG_H) && !defined(SQLITECONFIG_H)
+ /* #include "config.h" */
++#include "pipeline/resolver.h"
+ #define SQLITECONFIG_H 1
+ #endif
+ 
+@@ -33783,7 +33784,7 @@ static struct unix_syscall {
+ #endif
+ #define osGeteuid   ((uid_t(*)(void))aSyscall[21].pCurrent)
+ 
+-#if !defined(SQLITE_OMIT_WAL) || SQLITE_MAX_MMAP_SIZE>0
++#if !defined(ANDROID) && !defined(SQLITE_OMIT_WAL) || SQLITE_MAX_MMAP_SIZE>0
+   { "mmap",         (sqlite3_syscall_ptr)mmap,            0 },
+ #else
+   { "mmap",         (sqlite3_syscall_ptr)0,               0 },
+@@ -39679,8 +39680,7 @@ static int unixFullPathname(
+ #endif   /* HAVE_READLINK && HAVE_LSTAT */
+ }
+ 
+-
+-#ifndef SQLITE_OMIT_LOAD_EXTENSION
++#if !defined(SQLITE_OMIT_LOAD_EXTENSION) && !defined(LIBREALSENSE)
+ /*
+ ** Interfaces for opening a shared library, finding entry points
+ ** within the shared library, and closing the shared library.
+-- 
+2.26.0
+
