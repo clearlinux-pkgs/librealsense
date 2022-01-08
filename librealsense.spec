@@ -36,9 +36,9 @@ BuildRequires : pkgconfig(osmesa)
 BuildRequires : pkgconfig(wayland-protocols)
 BuildRequires : pkgconfig(xkbcommon)
 BuildRequires : python3
-BuildRequires : setuptools
-BuildRequires : twine
-BuildRequires : wheel
+BuildRequires : pypi(setuptools)
+BuildRequires : pypi(twine)
+BuildRequires : pypi(wheel)
 Patch1: 0001-Reapply-librealsense-changes-to-sqlite.patch
 
 %description
