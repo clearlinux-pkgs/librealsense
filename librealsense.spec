@@ -15,8 +15,8 @@ Requires: librealsense-bin = %{version}-%{release}
 Requires: librealsense-lib = %{version}-%{release}
 Requires: librealsense-license = %{version}-%{release}
 Requires: setuptools
-Requires: twine
-Requires: wheel
+Requires: pypi(twine)
+Requires: pypi(wheel)
 BuildRequires : Vulkan-Headers-dev Vulkan-Loader-dev Vulkan-Tools
 BuildRequires : buildreq-cmake
 BuildRequires : buildreq-distutils3
