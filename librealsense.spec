@@ -4,7 +4,7 @@
 #
 Name     : librealsense
 Version  : 2.30.1
-Release  : 11
+Release  : 12
 URL      : https://github.com/IntelRealSense/librealsense/archive/v2.30.1/librealsense-2.30.1.tar.gz
 Source0  : https://github.com/IntelRealSense/librealsense/archive/v2.30.1/librealsense-2.30.1.tar.gz
 Source1  : https://sqlite.org/2020/sqlite-autoconf-3310100.tar.gz
@@ -14,9 +14,6 @@ License  : Apache-2.0 BSD-2-Clause BSD-3-Clause-LBNL BSL-1.0 MIT Zlib
 Requires: librealsense-bin = %{version}-%{release}
 Requires: librealsense-lib = %{version}-%{release}
 Requires: librealsense-license = %{version}-%{release}
-Requires: setuptools
-Requires: pypi(twine)
-Requires: pypi(wheel)
 BuildRequires : Vulkan-Headers-dev Vulkan-Loader-dev Vulkan-Tools
 BuildRequires : buildreq-cmake
 BuildRequires : buildreq-distutils3
@@ -25,20 +22,23 @@ BuildRequires : cmake
 BuildRequires : doxygen
 BuildRequires : extra-cmake-modules pkgconfig(wayland-client)
 BuildRequires : extra-cmake-modules wayland
+BuildRequires : extra-cmake-modules-data
 BuildRequires : glfw-dev
 BuildRequires : glibc-dev
 BuildRequires : glu-dev
 BuildRequires : libX11-dev libICE-dev libSM-dev libXau-dev libXcomposite-dev libXcursor-dev libXdamage-dev libXdmcp-dev libXext-dev libXfixes-dev libXft-dev libXi-dev libXinerama-dev libXi-dev libXmu-dev libXpm-dev libXrandr-dev libXrender-dev libXres-dev libXScrnSaver-dev libXt-dev libXtst-dev libXv-dev libXxf86vm-dev
+BuildRequires : librealsense-dev
 BuildRequires : mesa-dev
+BuildRequires : opencv-dev
 BuildRequires : pkg-config
 BuildRequires : pkgconfig(libusb-1.0)
 BuildRequires : pkgconfig(osmesa)
 BuildRequires : pkgconfig(wayland-protocols)
 BuildRequires : pkgconfig(xkbcommon)
-BuildRequires : python3
 BuildRequires : pypi(setuptools)
 BuildRequires : pypi(twine)
 BuildRequires : pypi(wheel)
+BuildRequires : python3
 Patch1: 0001-Reapply-librealsense-changes-to-sqlite.patch
 
 %description
@@ -101,23 +101,23 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1585946249
+export SOURCE_DATE_EPOCH=1641982949
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
-export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=auto "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=auto "
 %cmake ..
-make  %{?_smp_mflags}  VERBOSE=1
+make  %{?_smp_mflags}
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1585946249
+export SOURCE_DATE_EPOCH=1641982949
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/librealsense
 cp %{_builddir}/librealsense-2.30.1/LICENSE %{buildroot}/usr/share/package-licenses/librealsense/feb32923246a19b9ca9f031fb603f140e2f212fe
